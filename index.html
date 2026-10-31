@@ -1,0 +1,153 @@
+# cineAI-studio
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10101b">
+<title>CineAI Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10101b;color:#fff;font-family:Arial,sans-serif}
+header{padding:22px 18px;background:#191929;border-bottom:1px solid #303047}
+.logo{font-size:25px;font-weight:bold;color:#b9a2ff}
+header p{color:#aaa;font-size:13px;margin-bottom:0}
+main{max-width:650px;margin:auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center}
+button,select,textarea{font:inherit}
+.lang,.generate{border:0;border-radius:12px;padding:12px 16px;cursor:pointer}
+.lang{background:#302b49;color:#fff}
+.panel{background:#1b1b2b;padding:18px;border-radius:18px;margin-top:18px}
+h2{font-size:18px;margin-top:0}
+label{display:block;margin:15px 0 8px;color:#ddd;font-size:14px}
+textarea,select{width:100%;padding:13px;border-radius:11px;border:1px solid #41415a;background:#11111d;color:white}
+textarea{min-height:115px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.upload{display:block;border:1px dashed #77708e;border-radius:12px;padding:22px;text-align:center;color:#c8baff;cursor:pointer}
+.upload input{display:none}
+#preview{display:none;max-width:100%;max-height:220px;margin:14px auto 0;border-radius:12px}
+.generate{width:100%;margin-top:20px;background:linear-gradient(100deg,#7655db,#b34cbb);color:white;font-weight:bold;font-size:16px}
+.note{font-size:12px;line-height:1.7;color:#aaa}
+footer{text-align:center;color:#777;padding:25px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div class="logo">🎬 CineAI Studio</div>
+  <button class="lang" id="langBtn" onclick="toggleLang()">English</button>
+ </div>
+ <p id="subtitle">استوديو صناعة الفيديو السينمائي بالذكاء الاصطناعي</p>
+</header>
+
+<main>
+ <div class="panel">
+  <h2 id="heading">✨ أنشئ فيديوك السينمائي</h2>
+
+  <label id="promptLabel">وصف الفيديو</label>
+  <textarea id="prompt" placeholder="مثال: مدينة مستقبلية تحت المطر، إضاءة سينمائية وحركة كاميرا بطيئة..."></textarea>
+
+  <label id="imageLabel">صورة مرجعية (اختياري)</label>
+  <label class="upload">
+   <span id="uploadText">📷 اضغط لاختيار صورة من هاتفك</span>
+   <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp">
+  </label>
+  <img id="preview" alt="معاينة الصورة">
+
+  <div class="grid">
+   <div>
+    <label id="providerLabel">محرك الفيديو</label>
+    <select id="provider">
+     <option value="veo">Google Veo</option>
+     <option value="runway">Runway</option>
+    </select>
+   </div>
+   <div>
+    <label id="ratioLabel">أبعاد الفيديو</label>
+    <select id="ratio">
+     <option value="16:9">16:9 أفقي</option>
+     <option value="9:16">9:16 عمودي</option>
+     <option value="1:1">1:1 مربع</option>
+    </select>
+   </div>
+  </div>
+
+  <label id="styleLabel">النمط السينمائي</label>
+  <select id="style">
+   <option value="cinematic">سينمائي</option>
+   <option value="realistic">واقعي</option>
+   <option value="animation">رسوم متحركة</option>
+   <option value="documentary">وثائقي</option>
+  </select>
+
+  <button class="generate" onclick="generate()" id="generateBtn">✨ تجهيز الفيديو</button>
+  <p class="note" id="notice">هذه نسخة تجريبية للواجهة. توليد الفيديو الحقيقي غير متصل بعد، وسيحتاج إلى خادم ومفتاح API آمن.</p>
+ </div>
+</main>
+
+<footer> CINEAI STUDIO · Creative video workspace </footer>
+
+<script>
+let english=false;
+
+function toggleLang(){
+ english=!english;
+ document.documentElement.lang=english?"en":"ar";
+ document.documentElement.dir=english?"ltr":"rtl";
+ document.getElementById("langBtn").textContent=english?"العربية":"English";
+ const words=english?{
+ subtitle:"AI cinematic video creation studio",
+ heading:"✨ Create your cinematic video",
+ promptLabel:"Video description",
+ imageLabel:"Reference image (optional)",
+ uploadText:"📷 Choose an image from your phone",
+ providerLabel:"Video engine",
+ ratioLabel:"Video aspect ratio",
+ styleLabel:"Cinematic style",
+ generateBtn:"✨ Prepare video",
+ notice:"This is a UI prototype. Real video generation is not connected yet and requires a secure server and API key."
+ }:{
+ subtitle:"استوديو صناعة الفيديو السينمائي بالذكاء الاصطناعي",
+ heading:"✨ أنشئ فيديوك السينمائي",
+ promptLabel:"وصف الفيديو",
+ imageLabel:"صورة مرجعية (اختياري)",
+ uploadText:"📷 اضغط لاختيار صورة من هاتفك",
+ providerLabel:"محرك الفيديو",
+ ratioLabel:"أبعاد الفيديو",
+ styleLabel:"النمط السينمائي",
+ generateBtn:"✨ تجهيز الفيديو",
+ notice:"هذه نسخة تجريبية للواجهة. توليد الفيديو الحقيقي غير متصل بعد، وسيحتاج إلى خادم ومفتاح API آمن."
+ };
+ Object.keys(words).forEach(id=>document.getElementById(id).textContent=words[id]);
+}
+
+document.getElementById("imageInput").addEventListener("change",function(e){
+ const file=e.target.files[0];
+ if(!file)return;
+ if(file.size>10*1024*1024){
+  alert(english?"Image must be smaller than 10 MB":"يجب ألا يتجاوز حجم الصورة 10 ميغابايت");
+  this.value="";
+  return;
+ }
+ const reader=new FileReader();
+ reader.onload=event=>{
+  const preview=document.getElementById("preview");
+  preview.src=event.target.result;
+  preview.style.display="block";
+ };
+ reader.readAsDataURL(file);
+});
+
+function generate(){
+ const prompt=document.getElementById("prompt").value.trim();
+ if(!prompt){
+  alert(english?"Please write a video description first.":"اكتب وصف الفيديو أولاً.");
+  return;
+ }
+ alert(english?
+ "Your project interface is ready. AI video generation will be enabled after connecting a secure backend.":
+ "تم تجهيز إعدادات مشروعك! سنفعّل توليد الفيديو بعد ربط خادم آمن بخدمة الذكاء الاصطناعي.");
+}
+</script>
+</body>
+</html>
